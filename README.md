@@ -2,10 +2,10 @@
 
 A minimalist, self-hosted fitness tracking application for logging workouts, tracking progress, and visualizing your training data.
 
-![GitHub](https://img.shields.io/github/license/justind-dev/fit-tracker)
-![GitHub issues](https://img.shields.io/github/issues/justind-dev/fit-tracker)
-![GitHub forks](https://img.shields.io/github/forks/justind-dev/fit-tracker)
-![GitHub stars](https://img.shields.io/github/stars/justind-dev/fit-tracker)
+[![License](https://img.shields.io/github/license/justind-dev/fit-tracker?style=flat-square)](https://github.com/justind-dev/fit-tracker/blob/main/LICENSE)
+[![Issues](https://img.shields.io/github/issues/justind-dev/fit-tracker?style=flat-square)](https://github.com/justind-dev/fit-tracker/issues)
+[![Forks](https://img.shields.io/github/forks/justind-dev/fit-tracker?style=flat-square)](https://github.com/justind-dev/fit-tracker/network/members)
+[![Stars](https://img.shields.io/github/stars/justind-dev/fit-tracker?style=flat-square)](https://github.com/justind-dev/fit-tracker/stargazers)
 
 ## Features
 

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fit Tracker</h1>
+        </header>
+
+        <!-- Backup/Restore Section -->
+        <div class="backup-restore-section">
+            <button id="exportBtn" class="backup-btn">
+                <span class="icon">💾</span>
+                Export Backup
+            </button>
+            <button id="importBtn" class="backup-btn">
+                <span class="icon">📥</span>
+                Import Backup
+            </button>
+            <input type="file" id="importFile" accept=".json" style="display: none;">
+        </div>
+
+        <!-- Statistics Button -->
+        <div class="stats-section">
+            <button id="statsBtn" class="stats-btn">
+                <span class="icon">📊</span>
+                View Statistics
+            </button>
+        </div>
+
+        <!-- Date Navigation -->
+        <div class="date-navigation">
+            <button id="prevDayBtn" class="nav-arrow-btn" title="Previous Day">
+                ←
+            </button>
+            <div id="currentDate" class="current-date"></div>
+            <button id="nextDayBtn" class="nav-arrow-btn" title="Next Day">
+                →
+            </button>
+        </div>
+
+        <!-- Add Exercise Button -->
+        <div class="add-exercise-section">
+            <button id="addExerciseBtn" class="add-exercise-btn">
+                <span class="plus-icon">+</span>
+                Log Exercise
+            </button>
+        </div>
+
+        <!-- Exercises List -->
+        <div id="exercisesList" class="exercises-list"></div>
+    </div>
+
+    <!-- Log Exercise Modal -->
+    <div id="exerciseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Log Exercise</h2>
+                <button id="closeModalBtn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="exerciseForm">
+                    <div class="form-group">
+                        <label for="exerciseName">Exercise Name</label>
+                        <input
+                            type="text"
+                            id="exerciseName"
+                            list="exerciseNames"
+                            placeholder="e.g., Bench Press, Running"
+                            required
+                            autocomplete="off"
+                        >
+                        <datalist id="exerciseNames"></datalist>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="repType">Rep Type</label>
+                        <select id="repType">
+                            <option value="reps">Reps</option>
+                            <option value="mins">Minutes</option>
+                            <option value="secs">Seconds</option>
+                            <option value="miles">Miles</option>
+                            <option value="km">Kilometers</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reps">Count</label>
+                        <input
+                            type="number"
+                            id="reps"
+                            placeholder="e.g., 10"
+                            min="0"
+                            step="0.1"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weight">Weight (lbs) - Optional</label>
+                        <input
+                            type="number"
+                            id="weight"
+                            placeholder="e.g., 135"
+                            min="0"
+                            step="0.5"
+                        >
+                    </div>
+
+                    <!-- Body Parts Selection (only shown for new exercises) -->
+                    <div id="bodyPartsGroup" class="form-group" style="display: none;">
+                        <label>Body Parts Targeted</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="bodyPart" value="chest"> Chest
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="bodyPart" value="arms"> Arms
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="bodyPart" value="shoulders"> Shoulders
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="bodyPart" value="back"> Back
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="bodyPart" value="abs"> Abs
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="bodyPart" value="legs"> Legs
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="bodyPart" value="calves"> Calves
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="bodyPart" value="cardio"> Cardio
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Set</button>
+                    </div>
+                </form>
+
+                <!-- Sets Display -->
+                <div id="setsSection" class="sets-section" style="display: none;">
+                    <div class="modal-separator"></div>
+                    <h3>Sets for This Session</h3>
+                    <div id="setsList" class="sets-list"></div>
+                    <button id="finishExerciseBtn" class="btn btn-primary" style="width: 100%; margin-top: 15px;">
+                        Finish Exercise
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Modal -->
+    <div id="statsModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Statistics</h2>
+                <button id="closeStatsBtn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Date Range Selector -->
+                <div class="date-range-selector">
+                    <div class="form-group">
+                        <label for="statsStartDate">Start Date</label>
+                        <input type="date" id="statsStartDate" />
+                    </div>
+                    <div class="form-group">
+                        <label for="statsEndDate">End Date</label>
+                        <input type="date" id="statsEndDate" />
+                    </div>
+                    <button id="updateStatsBtn" class="btn btn-primary">Update Charts</button>
+                </div>
+
+                <!-- Summary Stats -->
+                <div class="summary-stats">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Exercises</div>
+                        <div class="stat-value" id="totalExercises">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Sets</div>
+                        <div class="stat-value" id="totalSets">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Weight Moved</div>
+                        <div class="stat-value" id="totalWeight">0 lbs</div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-container">
+                    <div class="chart-wrapper">
+                        <h3>Exercises by Body Part</h3>
+                        <canvas id="bodyPartExerciseChart"></canvas>
+                    </div>
+
+                    <div class="chart-wrapper">
+                        <h3>Total Reps by Body Part</h3>
+                        <canvas id="bodyPartRepsChart"></canvas>
+                    </div>
+
+                    <div class="chart-wrapper">
+                        <h3>Total Weight by Exercise</h3>
+                        <canvas id="weightByExerciseChart"></canvas>
+                    </div>
+
+                    <div class="chart-wrapper">
+                        <h3>Sets by Exercise</h3>
+                        <canvas id="setsByExerciseChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

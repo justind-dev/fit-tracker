@@ -486,16 +486,19 @@ class FitTracker {
     }
 
     getExercisesInDateRange(startDate, endDate) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
+        // Ensure we're working with local dates, not UTC
+        const start = new Date(startDate + 'T00:00:00');
+        const end = new Date(endDate + 'T23:59:59');
         const exercises = [];
 
         // Iterate through all dates in range
-        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-            const dateKey = this.formatDateKey(d);
+        const current = new Date(start);
+        while (current <= end) {
+            const dateKey = this.formatDateKey(current);
             if (this.exercises[dateKey]) {
                 exercises.push(...this.exercises[dateKey]);
             }
+            current.setDate(current.getDate() + 1);
         }
 
         return exercises;
